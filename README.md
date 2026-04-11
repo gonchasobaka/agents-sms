@@ -2,25 +2,22 @@
 
 <br/>
 
-```
- ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
- █  SMS VERIFICATION  ·  FOR AI AGENTS  █
- ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
-```
+<h1>📱 agents-sms</h1>
 
-# agents-sms · MCP Server
+<p><strong>MCP server that gives AI agents the ability to buy phone numbers and receive SMS codes — fully autonomously.</strong></p>
 
-**Your agent buys a number. Receives the code. Continues. No human needed.**
-
-[![MCP](https://img.shields.io/badge/MCP-compatible-6366f1?style=flat-square)](https://modelcontextprotocol.io)
-[![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
-[![Providers](https://img.shields.io/badge/providers-5sim%20·%20sms--activate%20·%20onlinesim-0ea5e9?style=flat-square)](#providers)
+<p>
+  <a href="https://mcp-sms-nu.vercel.app"><img src="https://img.shields.io/badge/☁️_Hosted_Version-Free_to_try-6366f1?style=for-the-badge" alt="Hosted"/></a>
+  &nbsp;
+  <a href="#self-hosting"><img src="https://img.shields.io/badge/Self--host-MIT_License-22c55e?style=for-the-badge" alt="Self-host"/></a>
+  &nbsp;
+  <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Compatible-0ea5e9?style=for-the-badge" alt="MCP"/></a>
+</p>
 
 <br/>
 
-### → [**Use the hosted version — no setup, pay with crypto**](https://mcp-sms-nu.vercel.app) ←
-
-*Top up balance, add one line to your config, done.*
+> **For agents** — no API key juggling, no phone, no human in the loop.<br/>
+> **For humans** — one config line and your agent handles SMS verification forever.
 
 <br/>
 
@@ -28,38 +25,52 @@
 
 ---
 
-## What happens when your agent has this tool
+## How it works
+
+Your agent calls three tools. That's the whole flow:
 
 ```
-Agent: "I need to verify a GitHub account"
+buy_number   →   get_sms   →   release_number
+```
 
+**Live example:**
+
+```
 → buy_number({ service: "github", country: "any" })
-← { phone: "+14155552671", number_id: "abc123", price_usd: 0.15 }
+← { phone: "+14155552671", number_id: "abc123", provider: "5sim", price_usd: 0.15 }
 
-  [agent enters phone on GitHub...]
+  [agent submits phone on GitHub]
 
 → get_sms({ number_id: "abc123", provider: "5sim" })
 ← { status: "waiting" }
 
-  // 9 seconds later
+  // ~10 seconds pass
 
 → get_sms({ number_id: "abc123", provider: "5sim" })
 ← { status: "received", code: "847291" }
 
-  [agent enters code. Account created. ✓]
+  [agent enters code → account verified ✓]
 ```
 
-No clicking. No waiting. No human in the loop.
+No human needed. No phone needed. Works while you sleep.
 
 ---
 
-## Hosted version — zero setup
+## ☁️ Hosted version — easiest way to start
 
-> **[mcp-sms-nu.vercel.app](https://mcp-sms-nu.vercel.app)**
+<div align="center">
 
-1. Top up balance with crypto (USDT, TON, BTC, ETH — via CryptoBot, no KYC)
-2. Get your API key by email
-3. Add to your MCP config:
+### **[mcp-sms-nu.vercel.app](https://mcp-sms-nu.vercel.app)**
+
+*Top up with crypto → get API key → add to config → done*
+
+</div>
+
+**Three steps:**
+
+**1.** Top up balance at [mcp-sms-nu.vercel.app](https://mcp-sms-nu.vercel.app) — USDT, TON, BTC, ETH via CryptoBot. No KYC. Any amount.
+
+**2.** Add to your MCP config:
 
 ```json
 {
@@ -72,48 +83,46 @@ No clicking. No waiting. No human in the loop.
 }
 ```
 
-That's it. Works in Claude Desktop, Cursor, Windsurf — any MCP client.
+**3.** Ask your agent to buy a number. It just works.
 
-**Prices:** from $0.10 per SMS. Pay as you go. No subscription.
+**Pricing:** from ~$0.10 per SMS. Pay as you go, no subscription. Prices reflect real-time provider rates.
 
 ---
 
-## Tools
+## 🛠 Tools
 
-| Tool | What it does |
+| Tool | Description |
 |------|-------------|
-| `buy_number` | Buy a virtual number for any service. Returns phone number + ID |
-| `get_sms` | Poll for incoming SMS. Returns code when received |
-| `release_number` | Cancel unused number |
-| `list_services` | Browse available services + prices |
-| `get_provider_balance` | Check your provider account balance |
+| `buy_number` | Buy a virtual number for any service (Telegram, GitHub, WhatsApp, Google…) |
+| `get_sms` | Poll for incoming SMS — returns code when received |
+| `release_number` | Cancel a number and get a refund if no SMS arrived |
+| `list_services` | Browse all available services with live prices |
+| `get_provider_balance` | *(self-hosted only)* Check your provider account balance |
 
 ---
 
-## Use cases
+## 💡 What agents use this for
 
-**Bulk account creation** — agent registers N accounts overnight, handles every SMS step automatically
-
-**CI/CD testing** — test your SMS verification flow in a pipeline without a real phone
-
-**Research & automation** — any workflow that needs phone verification, fully autonomous
-
-**Personal agents** — build Claude workflows that can sign up for services on your behalf
+- **Bulk account creation** — register N accounts overnight, agent handles every verification step
+- **CI/CD pipelines** — test your own SMS flow without a real SIM card
+- **Research automation** — access platforms that require phone verification
+- **Personal workflows** — let Claude sign up for services on your behalf
 
 ---
 
 ## Self-hosting
 
-If you want to run your own instance with your own provider keys:
+Want full control? Run it with your own provider API keys.
 
 ```bash
 git clone https://github.com/gonchasobaka/agents-sms
 cd agents-sms
 npm install && npm run build
-cp .env.example .env   # add your provider API keys
+cp .env.example .env
+# fill in your provider keys
 ```
 
-**Config file** (`claude_desktop_config.json`):
+**MCP config (local):**
 ```json
 {
   "mcpServers": {
@@ -125,15 +134,21 @@ cp .env.example .env   # add your provider API keys
 }
 ```
 
-### Providers
+**Supported providers** — add at least one API key to `.env`:
 
-Add at least one API key to `.env`. Multiple = automatic cheapest-first selection.
+| Provider | Sign up |
+|----------|---------|
+| [5sim.net](https://5sim.net) | Free registration |
+| [sms-activate.org](https://sms-activate.org) | Free registration |
+| [onlinesim.io](https://onlinesim.io) | Free registration |
 
-| Provider | Sign up | Notes |
-|----------|---------|-------|
-| [5sim.net](https://5sim.net) | Free | Best coverage, clean API |
-| [sms-activate.org](https://sms-activate.org) | Free | Largest selection |
-| [onlinesim.io](https://onlinesim.io) | Free | Good EU coverage |
+Multiple providers = automatic cheapest-first selection with fallback.
+
+---
+
+## Works with
+
+Claude Desktop · Cursor · Windsurf · any MCP-compatible client
 
 ---
 
@@ -141,6 +156,6 @@ Add at least one API key to `.env`. Multiple = automatic cheapest-first selectio
 
 **Built for the agentic era.**
 
-[Hosted version](https://mcp-sms-nu.vercel.app) · [Issues](https://github.com/gonchasobaka/agents-sms/issues)
+[🌐 Hosted version](https://mcp-sms-nu.vercel.app) · [🐛 Issues](https://github.com/gonchasobaka/agents-sms/issues)
 
 </div>
