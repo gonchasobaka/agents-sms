@@ -256,6 +256,142 @@ function createMcpServer(): McpServer {
     }
   );
 
+  // ==========================================================
+  // Tool: get_balance
+  // ==========================================================
+  server.tool(
+    "get_balance",
+    "Check your current MCP SMS Server account balance. Call this before starting tasks to make sure you have enough funds. If balance is low, use create_invoice to top up.",
+    {},
+    async () => {
+      const apiUrl = process.env.BACKEND_API_URL;
+      const apiKey = process.env.MCP_SMS_API_KEY;
+
+      if (!apiUrl || !apiKey) {
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify({
+                error: "BACKEND_API_URL and MCP_SMS_API_KEY must be set in .env",
+              }),
+            },
+          ],
+        };
+      }
+
+      const res = await fetch(`${apiUrl}/balance`, {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+
+      if (!res.ok) {
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify({ error: `API error: ${res.status}` }),
+            },
+          ],
+        };
+      }
+
+      const data = await res.json() as any;
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify({
+              balance_usd: data.balance_usd,
+              low_balance: data.balance_usd < 1.0,
+              message:
+                data.balance_usd < 1.0
+                  ? "Balance is low. Use create_invoice() to top up."
+                  : `Balance OK: $${data.balance_usd}`,
+            }),
+          },
+        ],
+      };
+    }
+  );
+
+  // ==========================================================
+  // Tool: create_invoice
+  // ==========================================================
+  server.tool(
+    "create_invoice",
+    "Create a crypto payment invoice to top up your MCP SMS Server balance. Returns a payment URL — open it in a browser or send it to a human. Supports USDT, TON, BTC, ETH via CryptoBot. No KYC.",
+    {
+      amount_usd: z
+        .number()
+        .min(1)
+        .max(500)
+        .describe("Amount to top up in USD (min $1, max $500)"),
+      currency: z
+        .enum(["USDT", "TON", "BTC", "ETH"])
+        .default("USDT")
+        .describe("Crypto currency to pay with"),
+    },
+    async ({ amount_usd, currency }) => {
+      const cryptobotToken = process.env.CRYPTOBOT_TOKEN;
+
+      if (!cryptobotToken) {
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify({ error: "CRYPTOBOT_TOKEN not set in .env" }),
+            },
+          ],
+        };
+      }
+
+      const res = await fetch("https://pay.crypt.bot/api/createInvoice", {
+        method: "POST",
+        headers: {
+          "Crypto-Pay-API-Token": cryptobotToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          asset: currency,
+          amount: amount_usd.toFixed(2),
+          description: `MCP SMS Server balance top-up — $${amount_usd}`,
+          expires_in: 3600,
+        }),
+      });
+
+      const data = await res.json() as any;
+
+      if (!data.ok) {
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify({ error: "CryptoBot error", details: data.error }),
+            },
+          ],
+        };
+      }
+
+      const invoice = data.result;
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify({
+              pay_url: invoice.pay_url,
+              amount_usd,
+              currency,
+              expires_at: new Date(Date.now() + 3600 * 1000).toISOString(),
+              instructions: `Open this URL to pay: ${invoice.pay_url} — balance will update automatically after payment.`,
+            }),
+          },
+        ],
+      };
+    }
+  );
+
   return server;
 }
 
