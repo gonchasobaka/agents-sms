@@ -12,6 +12,8 @@
   <a href="#self-hosting"><img src="https://img.shields.io/badge/Self--host-MIT_License-22c55e?style=for-the-badge" alt="Self-host"/></a>
   &nbsp;
   <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Compatible-0ea5e9?style=for-the-badge" alt="MCP"/></a>
+  &nbsp;
+  <a href="https://discord.gg/FeUCmPdd"><img src="https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
 </p>
 
 <br/>
@@ -156,6 +158,6 @@ Claude Desktop · Cursor · Windsurf · any MCP-compatible client
 
 **Built for the agentic era.**
 
-[🌐 Hosted version](https://mcp-sms-nu.vercel.app) · [🐛 Issues](https://github.com/gonchasobaka/agents-sms/issues)
+[🌐 Hosted version](https://mcp-sms-nu.vercel.app) · [💬 Discord](https://discord.gg/FeUCmPdd) · [🐛 Issues](https://github.com/gonchasobaka/agents-sms/issues)
 
 </div>
