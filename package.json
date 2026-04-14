@@ -5,11 +5,15 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "postinstall": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts"
   },
-  "keywords": ["mcp", "sms", "ai-agents", "virtual-numbers"],
+  "keywords": [
+    "mcp",
+    "sms",
+    "ai-agents",
+    "virtual-numbers"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -23,6 +27,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "esbuild": "^0.28.0"
   }
 }
