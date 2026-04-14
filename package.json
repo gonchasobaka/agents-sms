@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
+    "postinstall": "ln -sf $(pwd)/node_modules/.bin/tsx /usr/local/bin/tsx || true",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts"
   },
