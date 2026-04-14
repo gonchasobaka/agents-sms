@@ -74,12 +74,24 @@ No human needed. No phone needed. Works while you sleep.
 
 **2.** Add to your MCP config:
 
+**Claude Desktop** (`~/Library/Application Support/Claude/claude_desktop_config.json` on Mac, `%APPDATA%\Claude\claude_desktop_config.json` on Windows):
 ```json
 {
   "mcpServers": {
     "sms": {
       "command": "npx",
       "args": ["-y", "mcp-remote", "https://mcp-sms-server-production.up.railway.app/sse"]
+    }
+  }
+}
+```
+
+**Cursor / Windsurf** (`.cursor/mcp.json` or `.windsurf/mcp.json`):
+```json
+{
+  "mcpServers": {
+    "sms": {
+      "url": "https://mcp-sms-server-production.up.railway.app/sse"
     }
   }
 }
