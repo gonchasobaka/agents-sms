@@ -7,7 +7,8 @@ RUN npm install
 
 COPY . .
 RUN npm run build
-RUN npm prune --omit=dev
+
+RUN npm install -g tsx
 
 ENV TRANSPORT=stdio
 ENV NODE_ENV=production
